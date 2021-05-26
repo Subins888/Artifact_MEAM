@@ -1,0 +1,532 @@
+Userstory-- AA_100
+------------------------------------------
+package AMP_Group.AMP_Userstory;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.openqa.selenium.WebDriver;
+
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+
+import AMP_Group.AMP_ArtifactID.ExtendBaseClass;
+import AMP_Group.AMP_ArtifactID.SSGenericFactory;
+import AMP_Group.AMP_ArtifactID.SSPageObject;
+
+public class AA_100 extends ExtendBaseClass {
+
+	WebDriver Driver;
+	SSGenericFactory GF = new SSGenericFactory(Driver);
+	SSPageObject PO = new SSPageObject(Driver);
+	static ExtentTest test;
+
+	static ExtentReports report;
+
+	
+	@Test(priority = 1, enabled = true)
+	public void AA_100_FrstMthd() throws Exception {
+
+		PO.waitforelement();
+		PO.Login();
+		
+
+	}
+	@Test(priority = 2, enabled = true)
+	public void AA_100_ScndMthd() throws Exception {
+
+		
+		PO.Menu();
+		Thread.sleep(7000);
+		PO.Genarate();
+		Thread.sleep(7000);
+		
+		
+	}
+	
+	@Test(priority = 3, enabled = true)
+	public void AA_100_ThirdMthd() throws Exception {
+		
+		PO.GenPopup();
+		Thread.sleep(5000);
+		
+		PO.WaitstartGen();
+		PO.GenerateStart();
+		
+		/*PO.WaitDSDGen();
+		PO.GenerateDSD();
+		PO.WaitUNITEDGen();
+		PO.GenerateUNITED();
+		PO.WaitWHSEGen();
+		PO.GenerateWHSE();
+		PO.WaitSBTGen();
+		PO.GenerateSBT();*/
+		
+		PO.WaitcompltGen();
+		PO.GenerateDis();
+		
+	}
+	
+	@BeforeTest
+	public void beforeTest() {
+
+		Driver = PO.beforeTest();
+		extentTest = extent.startTest("AMP Test", "Home Page");
+		extentTest.log(LogStatus.INFO, "Browser successfully launched");
+	}
+
+	@AfterTest
+	public WebDriver after() {
+
+		return PO.afterTest();
+
+	}
+}
+
+
+Page Object
+-----------------------------------------------------------
+package AMP_Group.AMP_ArtifactID;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+
+public class SSPageObject extends ExtendBaseClass {
+
+	WebDriver Driver;
+	SSGenericFactory GF = new SSGenericFactory(Driver);
+	static ExtentTest test;
+
+	static ExtentReports report;
+
+	public SSPageObject(WebDriver Driver) {
+		this.Driver = Driver;
+		PageFactory.initElements(Driver, this);
+	}
+
+	public String aftermthd(WebDriver Driver) throws IOException {
+
+		TakesScreenshot ts = (TakesScreenshot) Driver;
+		String source1 = ts.getScreenshotAs(OutputType.BASE64);
+		return source1;
+
+	}
+
+	public String waitforelement() {
+
+		WebDriverWait wait = new WebDriverWait(Driver, 60);
+		wait.until(ExpectedConditions.elementToBeClickable(GF.SignIn));
+
+		return null;
+	}
+
+	
+	
+	public void WaitstartGen() {
+		WebDriverWait wait = new WebDriverWait(Driver, 60);
+		wait.until(ExpectedConditions.textToBePresentInElement(GF.GencompMsg, "Revenue generation started..."));
+
+	}
+	
+/*	public void WaitDSDGen() {
+		WebDriverWait wait = new WebDriverWait(Driver, 60);
+		wait.until(ExpectedConditions.textToBePresentInElement(GF.GencompMsg, "DSD in progress..."));
+
+	}
+	
+	public void WaitUNITEDGen() {
+		WebDriverWait wait = new WebDriverWait(Driver, 60);
+		wait.until(ExpectedConditions.textToBePresentInElement(GF.GencompMsg, "UNITED in progress..."));
+
+	}
+	public void WaitWHSEGen() {
+		WebDriverWait wait = new WebDriverWait(Driver, 60);
+		wait.until(ExpectedConditions.textToBePresentInElement(GF.GencompMsg, "WHSE in progress..."));
+
+	}
+	public void WaitSBTGen() {
+		WebDriverWait wait = new WebDriverWait(Driver, 60);
+		wait.until(ExpectedConditions.textToBePresentInElement(GF.GencompMsg, "SBT in progress..."));
+
+	}  */
+	
+	public void WaitcompltGen() {
+		WebDriverWait wait = new WebDriverWait(Driver, 300);
+		wait.until(ExpectedConditions.textToBePresentInElement(GF.GencompMsg, "Revenue generation completed!"));
+
+	}
+
+	@BeforeClass
+	public static void startTest()
+
+	{
+
+		report = new ExtentReports(System.getProperty("user.dir") + "\\ExtentReportResults.html");
+
+		test = report.startTest("ExtentDemo");
+
+	}
+
+	@Test
+	public String Login() throws BiffException, IOException, InterruptedException {
+
+		String file = new File(System.getProperty("user.dir"), "TestData.xls").getAbsolutePath();
+
+		FileInputStream fi = new FileInputStream(file);
+
+		Workbook w = Workbook.getWorkbook(fi);
+		Sheet s = w.getSheet(0);
+
+		try {
+			for (int i = 1; i < s.getRows(); i++) {
+				// Read data from excel sheet
+
+				String s3 = s.getCell(1, i).getContents();
+				String s4 = s.getCell(2, i).getContents();
+				Thread.sleep(3000);
+
+				GF.Username.sendKeys(s3);
+				Thread.sleep(2500);
+
+				GF.Password.sendKeys(s4);
+				Thread.sleep(2500);
+
+				GF.SignIn.click();
+				Thread.sleep(5000);
+
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return null;
+
+	}
+
+	@Test
+	public void Menu() throws Exception {
+
+		Thread.sleep(1000);
+		GF.Revenueclk.click();
+		Thread.sleep(1000);
+		GF.Generateclk.click();
+		Thread.sleep(1000);
+
+	}
+
+	@Test
+	public void Genarate() throws Exception {
+
+		Thread.sleep(5000);
+		GF.Period_drop.sendKeys("201913", Keys.ENTER);
+
+		Thread.sleep(5000);
+
+		GF.GenButton.click();
+	}
+
+	public void GenPopup() {
+
+		try {
+			if (GF.YesGenPopup.isDisplayed()) {
+				GF.YesGenPopup.click();
+			}
+		} catch (Exception e) {
+
+			System.out.println("First time generation for this selected Period");
+		}
+	}
+
+	//MessageGeneration
+	
+	public String GenerateStart() {
+		
+		
+		String txt = GF.GencompMsg.getText();
+		
+		try {
+		if (txt.contains("Revenue generation started")) {
+			System.out.println("Revenue generation started message is displaying in home page");
+			extentTest.log(LogStatus.INFO, "Revenue generation started message is displaying in home page");
+		} else {
+			System.out.println("Revenue generation started message is not displaying in home page");
+			extentTest.log(LogStatus.FAIL, "Revenue generation started message is not displaying in home page");
+			Assert.assertTrue(txt.contains("Revenue generation started"));
+		}
+		} catch (Exception e) {
+
+			System.out.println("Revenue generation started message was gone");
+		}
+		
+		return null;
+		}	
+
+	
+/*	public String GenerateDSD() {
+		String txt = GF.GencompMsg.getText();
+		try {
+		if (txt.contains("DSD in progress...")) {
+			System.out.println("DSD in progress... message is displaying in home page");
+			extentTest.log(LogStatus.INFO, "DSD in progress... message is displaying in home page");
+		} else {
+			System.out.println("DSD in progress... message is not displaying in home page");
+			extentTest.log(LogStatus.FAIL, "DSD in progress... message is not displaying in home page");
+			Assert.assertTrue(txt.contains("DSD in progress..."));
+		}
+	} catch (Exception e) {
+
+		System.out.println("DSD in progress... message was gone");
+	}
+		return null;
+
+	}
+	
+	public String GenerateUNITED() {
+		String txt = GF.GencompMsg.getText();
+		try {
+		if (txt.contains("UNITED in progress...")) {
+			System.out.println("UNITED in progress... message is displaying in home page");
+			extentTest.log(LogStatus.INFO, "UNITED in progress... message is displaying in home page");
+		} else {
+			System.out.println("UNITED in progress... message is not displaying in home page");
+			extentTest.log(LogStatus.FAIL, "UNITED in progress... message is not displaying in home page");
+			Assert.assertTrue(txt.contains("UNITED in progress..."));
+		}
+	} catch (Exception e) {
+
+		System.out.println("UNITED in progress... message was gone");
+	}
+		return null;
+
+	}
+	
+	public String GenerateWHSE() {
+		String txt = GF.GencompMsg.getText();
+		try {
+		if (txt.contains("WHSE in progress...")) {
+			System.out.println("WHSE in progress... message is displaying in home page");
+			extentTest.log(LogStatus.INFO, "WHSE in progress... message is displaying in home page");
+		} else {
+			System.out.println("WHSE in progress... message is not displaying in home page");
+			extentTest.log(LogStatus.FAIL, "WHSE in progress... message is not displaying in home page");
+			Assert.assertTrue(txt.contains("WHSE in progress..."));
+		}
+	} catch (Exception e) {
+
+		System.out.println("WHSE in progress... message was gone");
+	}
+		return null;
+
+	}
+	
+	public String GenerateSBT() {
+		String txt = GF.GencompMsg.getText();
+		try {
+		if (txt.contains("SBT in progress...")) {
+			System.out.println("SBT in progress... message is displaying in home page");
+			extentTest.log(LogStatus.INFO, "SBT in progress... message is displaying in home page");
+		} else {
+			System.out.println("SBT in progress... message is not displaying in home page");
+			extentTest.log(LogStatus.FAIL, "SBT in progress... message is not displaying in home page");
+			Assert.assertTrue(txt.contains("SBT in progress..."));
+		}
+	} catch (Exception e) {
+
+		System.out.println("SBT in progress... message was gone");
+	}
+		return null;
+
+	}  */
+		
+	public String GenerateDis() {
+		String txt = GF.GencompMsg.getText();
+		try {
+		if (txt.contains("Revenue generation completed!")) {
+			System.out.println("Revenue generation completed! message is displaying in home page");
+			extentTest.log(LogStatus.INFO, "Revenue generation completed! message is displaying in home page");
+		} else {
+			System.out.println("Revenue generation completed! message is not displaying in home page");
+			extentTest.log(LogStatus.FAIL, "Revenue generation completed! message is not displaying in home page");
+			Assert.assertTrue(txt.contains("Revenue generation completed!"));
+		}
+	} catch (Exception e) {
+
+		System.out.println("Revenue generation completed! message was gone");
+	}
+		return null;
+
+	}
+
+	@BeforeTest
+	public WebDriver beforeTest() {
+
+		System.setProperty("webdriver.chrome.driver",
+				new File(System.getProperty("user.dir"), "chromedriver.exe").getAbsolutePath());
+
+		Driver = new ChromeDriver();
+		GF = new SSGenericFactory(Driver);
+
+		Driver.get("https://ig-meamqa.safeway.com/meamf/static/");
+		//Driver.get("https://meam-dev.safeway.com/meamf/static/");
+		
+		Driver.manage().window().maximize();
+
+		return Driver;
+
+	}
+
+	@AfterClass
+	public static void endTest()
+
+	{
+
+		report.endTest(test);
+		report.flush();
+
+	}
+
+	@AfterTest
+	public WebDriver afterTest() {
+
+		Driver.quit();
+
+		return Driver;
+
+	}
+
+}
+
+
+Generic Factory
+--------------------------------------------
+package AMP_Group.AMP_ArtifactID;
+
+//import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class SSGenericFactory {
+	WebDriver Driver;
+
+	@FindBy(xpath = "//*[@id='inputUsername']")
+	//@FindBy(id = "inputUsername")
+	WebElement Username;
+
+	@FindBy(xpath = "//*[@id='inputPassword']")
+	WebElement Password;
+
+	@FindBy(xpath = "//*[@id='form1']/button")
+	WebElement SignIn;
+
+	
+	@FindBy(xpath ="/html/body/app-root/amp-container/div/div[1]/div/amp-navbar/nav/div[2]/ul/li[2]")
+	WebElement Revenueclk;
+	
+	@FindBy(xpath ="//*[@id=\'ngb-popover-0\']/div[2]/amp-menu-pop-over/div/div[1]")
+	WebElement Generateclk;
+	
+	@FindBy(xpath="//*[@id='period']/div/div/div[2]/input")
+	WebElement Period_drop;
+	
+	@FindBy(xpath ="/html/body/app-root/amp-container/div/div[2]/div/div[2]/amp-generate/div/form/div/button[1]")
+	WebElement GenButton;
+	
+	@FindBy(xpath ="/html/body/app-root/amp-container/div/div[2]/div/div[2]/amp-generate/amp-stepper/div/div/div")
+	WebElement GencompMsg;
+	
+	@FindBy(xpath ="/html/body/app-root/amp-container/div/div[2]/div/div[2]/amp-generate/amp-modal/div/div/div/div[3]/button[1]")
+	WebElement YesGenPopup;
+	
+	public SSGenericFactory(WebDriver Driver) {
+		this.Driver = Driver;
+		PageFactory.initElements(Driver, this);
+	}
+
+}
+
+
+
+Extend Base class
+----------------------------------
+package AMP_Group.AMP_ArtifactID;
+
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+
+import java.io.IOException;
+
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+
+/**
+ * 
+ * 
+ * @author jmaya09
+ *
+ */
+
+public abstract class ExtendBaseClass {
+
+	public static ExtentReports extent;
+	public static ExtentTest extentTest;
+	WebDriver Driver;
+
+	// public abstract String getTestCaseName();
+	// public abstract String getTestCaseDescription();
+
+	@BeforeSuite
+	public void setup() throws IOException {
+
+		String extentReportFile = System.getProperty("user.dir") + "\\extentReportFile.html";
+		extent = new ExtentReports(extentReportFile, true);
+
+	}
+
+	@AfterMethod
+	public void getResult(ITestResult result) throws IOException {
+
+		if (result.getStatus() == ITestResult.FAILURE) {
+			extentTest.log(LogStatus.FAIL, " Test case Execution STOPPED");
+			System.out.println("Fail");
+		} else if (result.getStatus() == ITestResult.SUCCESS) {
+			extentTest.log(LogStatus.PASS, " Test Case Execution Completed");
+		} else {
+			extentTest.log(LogStatus.SKIP, " Test Case SKIPPED");
+		}
+
+	}
+
+	@AfterSuite
+	public void tearDown() {
+		extent.flush();
+
+	}
+}
